@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
+import { dbService } from '../fbApp';
 
 const Home = () => {
   const [ppby, setPpby] = useState('');
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await dbService.collection('ppby').add({
+      text: ppby,
+      createdAt: Date.now(),
+    });
+
+    setPpby('');
+    console.log(result);
   };
 
   const onChange = (e) => {
-    setPpby(() => e.target.value);
+    const {
+      target: { value },
+    } = e;
+
+    setPpby(() => value);
   };
 
   return (
