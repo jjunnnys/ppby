@@ -21,9 +21,9 @@ const Auth = () => {
     } = e;
 
     if (name === 'email') {
-      setEmail(value);
+      setEmail(() => value);
     } else if (name === 'password') {
-      setPassword(value);
+      setPassword(() => value);
     }
   };
 
