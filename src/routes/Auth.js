@@ -55,7 +55,7 @@ const Auth = () => {
 
   const onSocialLogIn = async (e) => {
     const {
-      target: { name, value },
+      target: { name },
     } = e;
 
     let provider;
