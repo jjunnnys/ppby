@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { authService } from '../fbApp';
 
-const Profile = () => {
+const Profile = ({ isLoggedIn }) => {
   const history = useHistory();
 
   const onLogOutClick = () => {

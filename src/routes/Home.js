@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { dbService } from '../fbApp';
 
-const Home = () => {
+const Home = ({ userObj }) => {
   const [ppby, setPpby] = useState('');
   const [ppbys, setPpbys] = useState([]);
 
   useEffect(() => {
-    const getPpbys = async () => {
-      const result = await dbService.collection('ppbys').get();
+    try {
+      // 어떤 DB에서의 변화든 알려줌
+      const dbSnapshot = async () => {
+        // reac, delete, update 등 모두 포함
+        await dbService.collection('ppbys').onSnapshot((snapshot) => {
+          console.log('변경');
+          // snapshot에도 document를 불러올 수 있음 (기존 get(), forEach방식 없애도 됨)
+          // 이 방법이 리렌더링을 방지함
+          const ppbyArray = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          console.log(ppbyArray);
 
-      result.forEach((doc) => {
-        const dbPpbyObject = {
-          ...doc.data(),
-          id: doc.id,
-        };
+          setPpbys(ppbyArray);
+        });
+      };
 
-        setPpbys((prev) => [dbPpbyObject, ...prev]); // 함수형 업데이트 시 파라미터로 이전 값을 조회할 수 있음
-      });
-    };
-    getPpbys();
+      dbSnapshot();
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const onSubmit = async (e) => {
@@ -27,6 +36,7 @@ const Home = () => {
     const result = await dbService.collection('ppbys').add({
       text: ppby,
       createdAt: Date.now(),
+      creatorId: userObj.uid,
     });
 
     setPpby(() => '');
