@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authService } from '../fbApp';
+import { authService, firebaseInstance } from '../fbApp';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -29,23 +29,20 @@ const Auth = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    let data;
 
     try {
       if (newAccount) {
         // 회원가입
-        const data = await authService.createUserWithEmailAndPassword(
+        data = await authService.createUserWithEmailAndPassword(
           email,
           password
         );
-        console.log(data);
       } else {
         // 로그인
-        const data = await authService.signInWithEmailAndPassword(
-          email,
-          password
-        );
-        console.log(data);
+        data = await authService.signInWithEmailAndPassword(email, password);
       }
+      console.log(data);
     } catch (error) {
       console.error(error);
       setError(() => error.code);
@@ -54,6 +51,26 @@ const Auth = () => {
 
   const toggleAccount = () => {
     setNewAccount((prev) => !prev);
+  };
+
+  const onSocialLogIn = async (e) => {
+    const {
+      target: { name, value },
+    } = e;
+
+    let provider;
+
+    try {
+      if (name === 'google') {
+        provider = new firebaseInstance.auth.GoogleAuthProvider();
+      } else if (name === 'github') {
+        provider = new firebaseInstance.auth.GithubAuthProvider();
+      }
+      const data = await authService.signInWithPopup(provider);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -80,8 +97,12 @@ const Auth = () => {
       <span onClick={toggleAccount}>{newAccount ? '회원가입' : '로그인'}</span>
       <div>{errorMessage[error]}</div>
       <div>
-        <button>google 로그인</button>
-        <button>github 로그인</button>
+        <button type="button" name="google" onClick={onSocialLogIn}>
+          google 로그인
+        </button>
+        <button type="button" name="" onClick={onSocialLogIn}>
+          github 로그인
+        </button>
       </div>
     </>
   );
