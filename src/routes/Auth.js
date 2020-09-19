@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { authService } from '../fbApp';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newAccount, setNewAccount] = useState(false);
 
   const onChange = (e) => {
     const {
@@ -16,8 +18,28 @@ const Auth = () => {
     }
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      if (newAccount) {
+        // 회원가입
+        const data = await authService.createUserWithEmailAndPassword(
+          email,
+          password
+        );
+        console.log(data);
+      } else {
+        // 로그인
+        const data = await authService.signInWithEmailAndPassword(
+          email,
+          password
+        );
+        console.log(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -39,7 +61,7 @@ const Auth = () => {
           onChange={onChange}
           required
         />
-        <input type="submit" value="로그인" />
+        <input type="submit" value={newAccount ? '회원가입' : '로그인'} />
       </form>
       <div>
         <button>google 로그인</button>
