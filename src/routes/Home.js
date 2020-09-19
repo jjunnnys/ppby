@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Ppby from '../components/Ppby';
 import { dbService } from '../fbApp';
 
 const Home = ({ userObj }) => {
@@ -65,9 +66,7 @@ const Home = ({ userObj }) => {
       </form>
       <div>
         {ppbys.map((v) => (
-          <div key={v.id}>
-            <h4>{v.text}</h4>
-          </div>
+          <Ppby key={v.id} ppby={v} isOwner={v.creatorId === userObj.uid} />
         ))}
       </div>
     </>
