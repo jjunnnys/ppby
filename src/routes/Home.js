@@ -52,6 +52,21 @@ const Home = ({ userObj }) => {
     setPpby(() => value);
   };
 
+  const onFileChange = (e) => {
+    const {
+      target: { files },
+    } = e;
+
+    const theFile = files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = (finishedEvent) => {
+      console.log(finishedEvent);
+    };
+
+    reader.readAsDataURL(theFile);
+  };
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -62,6 +77,7 @@ const Home = ({ userObj }) => {
           value={ppby}
           onChange={onChange}
         />
+        <input type="file" accept="image/*" onChange={onFileChange} />
         <input type="submit" value="PPBY" />
       </form>
       <div>
