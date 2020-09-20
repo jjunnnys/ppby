@@ -15,14 +15,12 @@ const Home = ({ userObj }) => {
       const dbSnapshot = async () => {
         // reac, delete, update 등 모두 포함
         await dbService.collection('ppbys').onSnapshot((snapshot) => {
-          console.log('변경');
           // snapshot에도 document를 불러올 수 있음 (기존 get(), forEach방식 없애도 됨)
           // 이 방법이 리렌더링을 방지함
           const ppbyArray = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
-          console.log(ppbyArray);
 
           setPpbys(ppbyArray);
         });
