@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
+
 import Ppby from '../components/Ppby';
-import { dbService } from '../fbApp';
+import { dbService, storageService } from '../fbApp';
 
 const Home = ({ userObj }) => {
   const [ppby, setPpby] = useState('');
@@ -35,14 +37,19 @@ const Home = ({ userObj }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await dbService.collection('ppbys').add({
-      text: ppby,
-      createdAt: Date.now(),
-      creatorId: userObj.uid,
-    });
+    const fileRef = await storageService
+      .ref()
+      .child(`${userObj.uid}/${nanoid()}`); // 파일에 대한 ref를 가진다. (유저 id로 폴더를 만든다.)
+    const res = await fileRef.putString(attachment, 'data_url');
+    console.log(res);
+    // const result = await dbService.collection('ppbys').add({
+    //   text: ppby,
+    //   createdAt: Date.now(),
+    //   creatorId: userObj.uid,
+    // });
 
-    setPpby(() => '');
-    console.log(result);
+    // setPpby(() => '');
+    // console.log(result);
   };
 
   const onChange = (e) => {
