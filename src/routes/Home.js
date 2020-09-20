@@ -5,6 +5,7 @@ import { dbService } from '../fbApp';
 const Home = ({ userObj }) => {
   const [ppby, setPpby] = useState('');
   const [ppbys, setPpbys] = useState([]);
+  const [attachment, setAttachment] = useState(null);
 
   useEffect(() => {
     try {
@@ -61,10 +62,18 @@ const Home = ({ userObj }) => {
     const reader = new FileReader();
 
     reader.onloadend = (finishedEvent) => {
-      console.log(finishedEvent);
+      const {
+        currentTarget: { result },
+      } = finishedEvent;
+
+      setAttachment(() => result);
     };
 
     reader.readAsDataURL(theFile);
+  };
+
+  const onClearAttachment = () => {
+    setAttachment(() => null);
   };
 
   return (
@@ -79,6 +88,14 @@ const Home = ({ userObj }) => {
         />
         <input type="file" accept="image/*" onChange={onFileChange} />
         <input type="submit" value="PPBY" />
+        {attachment && (
+          <div>
+            <img src={attachment} width="50px" height="50px" alt="사진" />
+            <button type="button" onClick={onClearAttachment}>
+              취소
+            </button>
+          </div>
+        )}
       </form>
       <div>
         {ppbys.map((v) => (
