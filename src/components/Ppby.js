@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { dbService } from '../fbApp';
+import { dbService, storageService } from '../fbApp';
 
 const Ppby = ({ ppby, isOwner }) => {
   const [checkEdit, setCheckEdit] = useState(false);
@@ -10,6 +10,7 @@ const Ppby = ({ ppby, isOwner }) => {
 
     if (ok) {
       await dbService.doc(`ppbys/${ppby.id}`).delete();
+      await storageService.refFromURL(ppby.attachmentUrl).delete();
     }
   };
 
