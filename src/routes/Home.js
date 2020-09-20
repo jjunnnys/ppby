@@ -7,7 +7,7 @@ import { dbService, storageService } from '../fbApp';
 const Home = ({ userObj }) => {
   const [ppby, setPpby] = useState('');
   const [ppbys, setPpbys] = useState([]);
-  const [attachment, setAttachment] = useState(null);
+  const [attachment, setAttachment] = useState('');
 
   useEffect(() => {
     try {
@@ -36,20 +36,27 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    let attachmentUrl = '';
 
-    const fileRef = await storageService
-      .ref()
-      .child(`${userObj.uid}/${nanoid()}`); // 파일에 대한 ref를 가진다. (유저 id로 폴더를 만든다.)
-    const res = await fileRef.putString(attachment, 'data_url');
-    console.log(res);
-    // const result = await dbService.collection('ppbys').add({
-    //   text: ppby,
-    //   createdAt: Date.now(),
-    //   creatorId: userObj.uid,
-    // });
+    if (attachment !== '') {
+      const attachmentRef = await storageService
+        .ref()
+        .child(`${userObj.uid}/${nanoid()}`); // 파일에 대한 ref를 가진다. (유저 id로 폴더를 만든다.)
+      const res = await attachmentRef.putString(attachment, 'data_url');
+      attachmentUrl = await res.ref.getDownloadURL();
+    }
 
-    // setPpby(() => '');
-    // console.log(result);
+    const formData = {
+      text: ppby,
+      createdAt: Date.now(),
+      creatorId: userObj.uid,
+      attachmentUrl,
+    };
+
+    await dbService.collection('ppbys').add(formData);
+
+    setPpby(() => '');
+    setAttachment(() => '');
   };
 
   const onChange = (e) => {

@@ -54,6 +54,14 @@ const Ppby = ({ ppby, isOwner }) => {
       ) : (
         <>
           <h4>{ppby.text}</h4>
+          {ppby.attachmentUrl && (
+            <img
+              src={ppby.attachmentUrl}
+              width="50px"
+              height="50px"
+              alt={ppby.text}
+            />
+          )}
           {isOwner && (
             <>
               <button type="button" onClick={onDelete}>
