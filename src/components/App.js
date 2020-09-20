@@ -13,7 +13,11 @@ function App() {
     const initialAuth = async () => {
       await authService.onAuthStateChanged((user) => {
         if (user) {
-          setUserObj(() => user);
+          setUserObj(() => ({
+            uid: user.uid,
+            displayName: user.displayName,
+            updateProfile: (args) => user.updateProfile(args),
+          }));
         }
         setInit(() => true);
       });
@@ -22,10 +26,25 @@ function App() {
     initialAuth();
   }, []);
 
+  // 리액트에서 파이어베이스의 변화를 감지하기 위해 사용
+  const refreshUser = () => {
+    const user = authService.currentUser;
+
+    setUserObj(() => ({
+      uid: user.uid,
+      displayName: user.displayName,
+      updateProfile: (args) => user.updateProfile(args),
+    }));
+  };
+
   return (
     <>
       {init ? (
-        <AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj} />
+        <AppRouter
+          isLoggedIn={Boolean(userObj)}
+          userObj={userObj}
+          refreshUser={refreshUser}
+        />
       ) : (
         '초기화중...'
       )}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { authService, dbService } from '../fbApp';
 
-const Profile = ({ userObj }) => {
+const Profile = ({ userObj, refreshUser }) => {
   const history = useHistory();
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 
@@ -38,9 +38,11 @@ const Profile = ({ userObj }) => {
     e.preventDefault();
 
     if (userObj.displayName !== newDisplayName) {
+      console.log(userObj);
       await userObj.updateProfile({
         displayName: newDisplayName,
       });
+      refreshUser(); // 유저 정보 새로고침
     }
   };
 
