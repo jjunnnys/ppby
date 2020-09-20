@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { authService, dbService } from '../fbApp';
 
 const Profile = ({ userObj }) => {
   const history = useHistory();
+  const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 
   useEffect(() => {
     const getMyPpbys = async () => {
@@ -25,8 +26,36 @@ const Profile = ({ userObj }) => {
     history.push('/');
   };
 
+  const onChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+
+    setNewDisplayName(() => value);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (userObj.displayName !== newDisplayName) {
+      await userObj.updateProfile({
+        displayName: newDisplayName,
+      });
+    }
+  };
+
   return (
     <>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          placeholder="닉네임"
+          value={newDisplayName}
+          onChange={onChange}
+        />
+        <input type="submit" value="바꾸기" />
+      </form>
+
       <button type="button" onClick={onLogOutClick}>
         로그아웃
       </button>
